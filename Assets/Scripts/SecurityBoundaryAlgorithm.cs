@@ -1,6 +1,11 @@
-using UnityEditor;
 using UnityEngine;
-
+public struct ProjectedPointInfo
+{
+    public string tag;
+    public float projectedDistance;
+    public Vector2 projectedPointPosition;
+    public Vector2 projectedLineDirection;
+}
 public class SecurityBoundaryAlgorithm
 {
     /// <summary>
@@ -34,32 +39,30 @@ public class SecurityBoundaryAlgorithm
     /// <param name="pA">线段端点A</param>
     /// <param name="pB">线段端点B</param>
     /// <param name="p">需要判断的点</param>
-    /// <returns>点p投影到线段上的垂直距离</returns>
-    public static float GetDistanceToLineSegment(Vector2 pA, Vector2 pB, Vector2 p)
+    /// <returns>点p投影到线段上的相关信息</returns>
+    public static ProjectedPointInfo GetProjectedPointToLineSegmentInfo(Vector2 pA, Vector2 pB, Vector2 p)
     {
-        var vecProjected = p - pA;
-        var vecEdge = pB - pA;
+        var projectedVec = p - pA;
+        var projectedEdge = pB - pA;
+        var dirFactor = Vector2.Dot(projectedVec, projectedEdge) / Vector2.Dot(projectedEdge, projectedEdge);
 
-        var dirFactor = Vector2.Dot(vecProjected, vecEdge) / Vector2.Dot(vecEdge, vecEdge);
+        var projectedPointInfo = new ProjectedPointInfo();
         if (0 < dirFactor && dirFactor <= 1)
         {
-            var vecProject = dirFactor * vecEdge;
-            var pointProject = pA + vecProject;
-            var distance = Vector3.Distance(p, pointProject);
+            var projectionVec = dirFactor * projectedEdge;
+            var projectedPointPosition = pA + projectionVec;
+            var projectedDistance = Vector3.Distance(p, projectedPointPosition);
 
-#if UNITY_EDITOR
-            ///////////////////////////////////Visualization///////////////////////////////////
-            Debug.DrawLine(new Vector3(p.x, 0, p.y), new Vector3(pointProject.x, 0, pointProject.y));
-            var labelPosition = p + (pointProject - p) / 2;
-            GUI.color = Color.white;
-            Handles.Label(new Vector3(pointProject.x, 0, pointProject.y - 0.05f), pointProject.ToString());
-            GUI.color = Color.yellow;
-            Handles.Label(new Vector3(labelPosition.x, 0, labelPosition.y + 0.05f), distance.ToString());
-            ///////////////////////////////////Visualization///////////////////////////////////  
-#endif
-
-            return distance;
+            projectedPointInfo.tag = projectedEdge.ToString();
+            projectedPointInfo.projectedDistance = projectedDistance;
+            projectedPointInfo.projectedLineDirection = projectedEdge;
+            projectedPointInfo.projectedPointPosition = projectedPointPosition;
+            return projectedPointInfo;
         }
-        return float.PositiveInfinity;
+        projectedPointInfo.tag = "";
+        projectedPointInfo.projectedDistance = float.PositiveInfinity;
+        projectedPointInfo.projectedLineDirection = Vector2.zero;
+        projectedPointInfo.projectedPointPosition = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+        return projectedPointInfo;
     }
 }

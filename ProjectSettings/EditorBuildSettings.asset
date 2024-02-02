@@ -5,7 +5,11 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/Security Boundary Test.unity
+    guid: d49ee1335a63f3b48bb51c97c4dc90ac
+  m_configObjects:
+    Unity.XR.PXR.Settings: {fileID: 11400000, guid: ae685bc5742c07e4da6a9b23b6402bac,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 35954236e2994d74c89221c1162d7a0e,
+      type: 2}
