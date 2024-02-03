@@ -65,24 +65,27 @@ public class SecurityBoundaryDisplay : MonoBehaviour
         while (true)
         {
             var direction = sceneCenterTrans.transform.position - MainCamera.transform.position;
-            m_SecurityArrawEffect.transform.position = MainCamera.transform.position + MainCamera.transform.forward - Vector3.up * 0.5f;//ÐÞ¸Ä
-            m_SecurityArrawEffect.transform.rotation = Quaternion.LookRotation(direction);
+            if (m_SecurityArrawEffect != null)
+            {
+                m_SecurityArrawEffect.transform.position = MainCamera.transform.position + MainCamera.transform.forward - Vector3.up * 0.5f;//ÐÞ¸Ä
+                m_SecurityArrawEffect.transform.rotation = Quaternion.LookRotation(direction);
+            }
             yield return null;
         }
     }
-    public void NearedBoundary(List<ProjectedPointInfo> pointsInfo)
+    public void NearedBoundary(List<MiniDistanceInfo> pointsInfo)
     {
         DestroyUselessEffect(pointsInfo);
         UpdateBoundaryEffect(pointsInfo);
     }
 
     List<string> uselessBoundaryEffectTags = new List<string>();
-    void DestroyUselessEffect(List<ProjectedPointInfo> pointsInfo)
+    void DestroyUselessEffect(List<MiniDistanceInfo> distanceInfo)
     {
         uselessBoundaryEffectTags.Clear();
         foreach (var b in m_BoundaryEffects)
         {
-            if (!pointsInfo.Exists(p => p.tag == b.Key))
+            if (!distanceInfo.Exists(p => p.tag == b.Key))
             {
                 uselessBoundaryEffectTags.Add(b.Key);
             }
@@ -93,11 +96,11 @@ public class SecurityBoundaryDisplay : MonoBehaviour
             m_BoundaryEffects.Remove(tag);
         }
     }
-    void UpdateBoundaryEffect(List<ProjectedPointInfo> pointsInfo)
+    void UpdateBoundaryEffect(List<MiniDistanceInfo> pointsInfo)
     {
         foreach (var p in pointsInfo)
         {
-            var targetPosition = new Vector3(p.projectedPointPosition.x, MainCamera.transform.position.y, p.projectedPointPosition.y);
+            var targetPosition = new Vector3(p.nearestPoint.x, MainCamera.transform.position.y, p.nearestPoint.y);
             if (!m_BoundaryEffects.ContainsKey(p.tag))
             {
                 var boundaryEffect = Instantiate(Resources.Load<GameObject>("BoundaryEffect"));

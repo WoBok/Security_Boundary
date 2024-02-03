@@ -1,10 +1,10 @@
 using UnityEngine;
-public struct ProjectedPointInfo
+public struct MiniDistanceInfo
 {
     public string tag;
-    public float projectedDistance;
-    public Vector2 projectedPointPosition;
-    public Vector2 projectedLineDirection;
+    public float minDistance;//点到线段的距离
+    public Vector2 nearestPoint;//点到直线上最近的点
+    public Vector2 projectedLineDirection;//被投影线段的方向
 }
 public class SecurityBoundaryAlgorithm
 {
@@ -34,35 +34,46 @@ public class SecurityBoundaryAlgorithm
         return intersectionCount % 2 != 0;
     }
     /// <summary>
-    /// 判断点是否垂直投影在由点pA和点pB构成的线段上，并计算投影到线段上的垂直距离
+    /// 计算点到线段的最短距离
     /// </summary>
     /// <param name="pA">线段端点A</param>
     /// <param name="pB">线段端点B</param>
     /// <param name="p">需要判断的点</param>
-    /// <returns>点p投影到线段上的相关信息</returns>
-    public static ProjectedPointInfo GetProjectedPointToLineSegmentInfo(Vector2 pA, Vector2 pB, Vector2 p)
+    /// <returns>点p到线段的最短距离的相关信息</returns>
+    public static MiniDistanceInfo GetMinDistanceInfo(Vector2 pA, Vector2 pB, Vector2 p)
     {
-        var projectedVec = p - pA;
-        var projectedEdge = pB - pA;
-        var dirFactor = Vector2.Dot(projectedVec, projectedEdge) / Vector2.Dot(projectedEdge, projectedEdge);
+        var projectedVector = p - pA;
+        var projectedLine = pB - pA;
+        var directionFactor = Vector2.Dot(projectedVector, projectedLine) / Vector2.Dot(projectedLine, projectedLine);
 
-        var projectedPointInfo = new ProjectedPointInfo();
-        if (0 < dirFactor && dirFactor <= 1)
+        var miniDistanceInfo = new MiniDistanceInfo();
+        miniDistanceInfo.tag = projectedLine.ToString();
+        miniDistanceInfo.projectedLineDirection = projectedLine;
+
+        if (directionFactor < 0)
         {
-            var projectionVec = dirFactor * projectedEdge;
-            var projectedPointPosition = pA + projectionVec;
-            var projectedDistance = Vector3.Distance(p, projectedPointPosition);
-
-            projectedPointInfo.tag = projectedEdge.ToString();
-            projectedPointInfo.projectedDistance = projectedDistance;
-            projectedPointInfo.projectedLineDirection = projectedEdge;
-            projectedPointInfo.projectedPointPosition = projectedPointPosition;
-            return projectedPointInfo;
+            var minDistance = Vector2.Distance(p, pA);
+            miniDistanceInfo.minDistance = minDistance;
+            miniDistanceInfo.nearestPoint = pA;
         }
-        projectedPointInfo.tag = "";
-        projectedPointInfo.projectedDistance = float.PositiveInfinity;
-        projectedPointInfo.projectedLineDirection = Vector2.zero;
-        projectedPointInfo.projectedPointPosition = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
-        return projectedPointInfo;
+
+        if (0 < directionFactor && directionFactor <= 1)
+        {
+            var projectionVector = directionFactor * projectedLine;
+            var nearestPoint = pA + projectionVector;
+            var minDistance = Vector2.Distance(p, nearestPoint);
+
+            miniDistanceInfo.minDistance = minDistance;
+            miniDistanceInfo.nearestPoint = nearestPoint;
+        }
+
+        if (directionFactor > 1)
+        {
+            var minDistance = Vector2.Distance(p, pB);
+            miniDistanceInfo.minDistance = minDistance;
+            miniDistanceInfo.nearestPoint = pB;
+        }
+
+        return miniDistanceInfo;
     }
 }
