@@ -7,10 +7,30 @@ public class SecurityBoundaryManager
     SecurityBoundaryDisplay m_BoundaryDisplay;
     SecurityBoundaryChecker m_BoundaryChecker;
 
-    public static void Open()
+    public static void Open(Vector2[] boundaryVertices, float minDistanceToBoundary, Transform sceneCenterTrans)
     {
         Instance.CreateBoundaryChecker();
         Instance.CreateBoundaryDisplay();
+        UpdateBoundaryPoints(boundaryVertices);
+        UpdateNearestDistanceToBoundary(minDistanceToBoundary);
+        UpdateSceneCenterTrans(sceneCenterTrans);
+    }
+    public static void Close()
+    {
+        Instance.DestroyBoundaryChecker();
+        Instance.DestroyBoundaryDisplay();
+    }
+    public static void UpdateBoundaryPoints(Vector2[] boundaryVertices)
+    {
+        Instance.m_BoundaryChecker.boundaryVertices = boundaryVertices;
+    }
+    public static void UpdateNearestDistanceToBoundary(float nearestDistanceToBoundary)
+    {
+        Instance.m_BoundaryChecker.nearestDistanceToBoundary = nearestDistanceToBoundary;
+    }
+    public static void UpdateSceneCenterTrans(Transform sceneCenterTrans)
+    {
+        Instance.m_BoundaryDisplay.sceneCenterTrans = sceneCenterTrans;
     }
     void CreateBoundaryChecker()
     {
@@ -37,11 +57,6 @@ public class SecurityBoundaryManager
             m_BoundaryChecker.OnMovedAwayFromSecurityBoundary += m_BoundaryDisplay.MovedAwayFromBoundary;
         }
     }
-    public static void Close()
-    {
-        Instance.DestroyBoundaryChecker();
-        Instance.DestroyBoundaryDisplay();
-    }
     void DestroyBoundaryChecker()
     {
         if (m_BoundaryChecker != null)
@@ -61,23 +76,5 @@ public class SecurityBoundaryManager
             Object.Destroy(m_BoundaryDisplay.gameObject);
             m_BoundaryDisplay = null;
         }
-    }
-    public static void Init(Vector2[] boundaryVertices, float minDistanceToBoundary, Transform sceneCenterTrans)
-    {
-        UpdateBoundaryPoints(boundaryVertices);
-        UpdateNearestDistanceToBoundary(minDistanceToBoundary);
-        UpdateSceneCenterTrans(sceneCenterTrans);
-    }
-    public static void UpdateBoundaryPoints(Vector2[] boundaryVertices)
-    {
-        Instance.m_BoundaryChecker.boundaryVertices = boundaryVertices;
-    }
-    public static void UpdateNearestDistanceToBoundary(float nearestDistanceToBoundary)
-    {
-        Instance.m_BoundaryChecker.nearestDistanceToBoundary = nearestDistanceToBoundary;
-    }
-    public static void UpdateSceneCenterTrans(Transform sceneCenterTrans)
-    {
-        Instance.m_BoundaryDisplay.sceneCenterTrans = sceneCenterTrans;
     }
 }

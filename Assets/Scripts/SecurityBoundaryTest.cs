@@ -15,7 +15,6 @@ public class SecurityBoundaryTest : MonoBehaviour
             var p = points[i].position;
             polygonPoints[i] = new Vector2(p.x, p.z);
         }
-        SecurityBoundaryManager.Open();
-        SecurityBoundaryManager.Init(polygonPoints, 0.45f, sceneCenter);
+        SecurityBoundaryManager.Open(polygonPoints, 0.45f, sceneCenter);
     }
 }

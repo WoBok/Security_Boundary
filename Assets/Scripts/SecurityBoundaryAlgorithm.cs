@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public struct MiniDistanceInfo
 {
     public string tag;
