@@ -123,7 +123,7 @@ public class SecurityBoundaryChecker : MonoBehaviour
             Vector3 pA = new Vector3(pVA.x, 0, pVA.y);
             Vector3 pB = new Vector3(pVB.x, 0, pVB.y);
             Debug.DrawLine(pA, pB);
-            Handles.Label(pA + Vector3.right * 0.05f, $"{pVA}");
+            Handles.Label(pA + Vector3.right * 0.05f + Vector3.up * 0.1f, $"{pVA}");
         }
         if (m_IsPlayerInBoundary)
         {
@@ -133,12 +133,13 @@ public class SecurityBoundaryChecker : MonoBehaviour
                 var playerPosition = new Vector2(MainCamera.transform.position.x, MainCamera.transform.position.z);
                 Gizmos.DrawLine(new Vector3(playerPosition.x, 0, playerPosition.y), new Vector3(pointInfo.nearestPoint.x, 0, pointInfo.nearestPoint.y));
                 GUI.color = Color.white;
-                Handles.Label(new Vector3(pointInfo.nearestPoint.x, 0, pointInfo.nearestPoint.y - 0.05f), pointInfo.nearestPoint.ToString());
+                Handles.Label(new Vector3(pointInfo.nearestPoint.x, 0, pointInfo.nearestPoint.y - 0.1f), pointInfo.nearestPoint.ToString());
                 var labelPosition = playerPosition + (pointInfo.nearestPoint - playerPosition) / 2;
-                GUI.color = Color.yellow;
-                Handles.Label(new Vector3(labelPosition.x, 0, labelPosition.y + 0.05f), pointInfo.minDistance.ToString());
+                GUI.color = Color.green;
+                Handles.Label(new Vector3(labelPosition.x, 0, labelPosition.y + 0.1f), pointInfo.minDistance.ToString());
             }
         }
+        GUI.color = Color.white;
         Handles.Label(new Vector3(PlayerPosition.x, 0, PlayerPosition.y), PlayerPosition.ToString());
     }
 #endif

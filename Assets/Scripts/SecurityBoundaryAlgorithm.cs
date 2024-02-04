@@ -57,7 +57,7 @@ public class SecurityBoundaryAlgorithm
             miniDistanceInfo.nearestPoint = pA;
         }
 
-        if (0 < directionFactor && directionFactor <= 1)
+        if (0 <= directionFactor && directionFactor <= 1)
         {
             var projectionVector = directionFactor * projectedLine;
             var nearestPoint = pA + projectionVector;
