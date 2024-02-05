@@ -17,6 +17,8 @@ public class SecurityBoundaryDisplay : MonoBehaviour
     Camera m_MainCamera;
     Camera MainCamera { get { if (m_MainCamera == null) m_MainCamera = Camera.main; return m_MainCamera; } }
 
+    Coroutine m_Coroutine;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     ///EnteredBoundary
     public void EnteredBoundary()
@@ -36,7 +38,8 @@ public class SecurityBoundaryDisplay : MonoBehaviour
     }
     void CloseExitedBoundaryEffect()
     {
-        StopCoroutine(ExitedBoundaryEffect());
+        if (m_Coroutine != null)
+            StopCoroutine(m_Coroutine);
         CloseSecurityArrawEffect();
         CloseSecurityBoundaryUI();
     }
@@ -63,7 +66,7 @@ public class SecurityBoundaryDisplay : MonoBehaviour
     public void ExitedBoundary()
     {
         OpenSecurityAreaEffect();
-        StartCoroutine(ExitedBoundaryEffect());
+        OpenExitedBoundaryEffect();
         CloseAllBoundaryEffect();
         SwitchVSTState(true);
     }
@@ -75,6 +78,12 @@ public class SecurityBoundaryDisplay : MonoBehaviour
             m_SecurityAreaEffect.transform.position = sceneCenterTrans.position;
             m_SecurityAreaEffect.transform.rotation = sceneCenterTrans.rotation;
         }
+    }
+    void OpenExitedBoundaryEffect()
+    {
+        if (m_Coroutine != null)
+            StopCoroutine(m_Coroutine);
+        m_Coroutine = StartCoroutine(ExitedBoundaryEffect());
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
